@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilimlar Oroli</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { 
+            font-family: 'Comic Sans MS', cursive, sans-serif; 
+            text-align: center; 
+            background-color: #f0f8ff; 
+            margin: 0; 
+            padding: 20px; 
+        }
+        .robo-ustoz { 
+            background: #ffffff; 
+            border-radius: 15px; 
+            padding: 20px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+            display: inline-block; 
+            margin-bottom: 20px; 
+        }
+        .speech-bubble { 
+            background: #e0f7fa; 
+            padding: 15px; 
+            border-radius: 10px; 
+            border: 2px solid #00bcd4; 
+            margin-top: 10px; 
+            font-size: 16px;
+            font-weight: bold; 
+            color: #006064;
+        }
+        .btn { 
+            background: #ff9800; 
+            color: white; 
+            padding: 15px 30px; 
+            border: none; 
+            border-radius: 10px; 
+            font-size: 18px; 
+            font-weight: bold;
+            cursor: pointer; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="robo-ustoz">
+        <h2>🤖 Robo-Ustoz</h2>
+        <div class="speech-bubble" id="robo-text">
+            Salom! Ayiqchaga faqat KICHKINA va QIZIL olmalarni savatga solishga yordam ber!
+        </div>
+    </div>
+
+    <div>
+        <p style="font-size: 40px;">🍎 🍏 🍎 🍏</p>
+        <button class="btn" onclick="sendDataToBot()">Savatga soldim!</button>
+    </div>
+
+    <script>
+        // Telegram Web App ni ishga tushirish va sozlash
+        let tg = window.Telegram.WebApp;
+        tg.expand(); // Ilovani to'liq ekranda ochish
+
+        function sendDataToBot() {
+            // Tugma bosilganda Robo-Ustozning gapi o'zgaradi
+            document.getElementById('robo-text').innerText = "Barakalla! Ma'lumotlarni serverga yuboryapman... 💾";
+            
+            // Botga (Python'ga) topshiriq bajarilgani haqida xabar yuboramiz
+            setTimeout(() => {
+                tg.sendData("modul_1_tugadi");
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
