@@ -2,7 +2,7 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Bilimlar Oroli</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -11,66 +11,123 @@
             text-align: center; 
             background-color: #f0f8ff; 
             margin: 0; 
-            padding: 20px; 
+            padding: 10px; 
+            overflow: hidden; /* Ekranni siljib ketishidan asraydi */
         }
         .robo-ustoz { 
-            background: #ffffff; 
-            border-radius: 15px; 
-            padding: 20px; 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
-            display: inline-block; 
-            margin-bottom: 20px; 
+            background: #ffffff; border-radius: 15px; padding: 15px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 20px; 
         }
         .speech-bubble { 
-            background: #e0f7fa; 
-            padding: 15px; 
-            border-radius: 10px; 
-            border: 2px solid #00bcd4; 
-            margin-top: 10px; 
-            font-size: 16px;
-            font-weight: bold; 
-            color: #006064;
+            background: #e0f7fa; padding: 10px; border-radius: 10px; 
+            border: 2px solid #00bcd4; margin-top: 10px; font-weight: bold; color: #006064;
         }
+        
+        /* Savat dizayni */
+        #basket {
+            width: 80%; height: 120px; margin: 0 auto 30px auto;
+            border: 4px dashed #ff9800; border-radius: 20px; background: #fff3e0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; font-weight: bold; color: #e65100;
+        }
+
+        /* Olmalar dizayni */
+        .apples-container {
+            display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; height: 150px;
+        }
+        .apple { 
+            position: relative; z-index: 10;
+            touch-action: none; /* Telefon ekranini tortib yubormaslik uchun */
+        }
+        .big { font-size: 60px; }
+        .small { font-size: 35px; }
+        
         .btn { 
-            background: #ff9800; 
-            color: white; 
-            padding: 15px 30px; 
-            border: none; 
-            border-radius: 10px; 
-            font-size: 18px; 
-            font-weight: bold;
-            cursor: pointer; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background: #4CAF50; color: white; padding: 15px 30px; 
+            border: none; border-radius: 10px; font-size: 18px; 
+            font-weight: bold; cursor: pointer; display: none; margin: 20px auto;
         }
     </style>
 </head>
 <body>
 
     <div class="robo-ustoz">
-        <h2>🤖 Robo-Ustoz</h2>
+        <h3>🤖 Robo-Ustoz</h3>
         <div class="speech-bubble" id="robo-text">
-            Salom! Ayiqchaga faqat KICHKINA va QIZIL olmalarni savatga solishga yordam ber!
+            Salom! Ayiqchaga faqat KICHKINA va QIZIL olmani savatga solishga yordam ber! (Olmani barmog'ing bilan surib savatga olib kel)
         </div>
     </div>
 
-    <div>
-        <p style="font-size: 40px;">🍎 🍏 🍎 🍏</p>
-        <button class="btn" onclick="sendDataToBot()">Savatga soldim!</button>
+    <div id="basket">🧺 Bo'sh savat</div>
+
+    <div class="apples-container">
+        <div class="apple big" id="wrong1">🍏</div>
+        <div class="apple small target" id="correct">🍎</div> <div class="apple big" id="wrong2">🍎</div>
     </div>
 
+    <button class="btn" id="finish-btn" onclick="sendDataToBot()">Sayohatni davom ettirish 🚀</button>
+
     <script>
-        // Telegram Web App ni ishga tushirish va sozlash
         let tg = window.Telegram.WebApp;
-        tg.expand(); // Ilovani to'liq ekranda ochish
+        tg.expand(); 
+
+        const apples = document.querySelectorAll('.apple');
+        const basket = document.getElementById('basket');
+        const roboText = document.getElementById('robo-text');
+        const finishBtn = document.getElementById('finish-btn');
+
+        apples.forEach(apple => {
+            // Barmoq bilan surilganda
+            apple.addEventListener('touchmove', function(e) {
+                let touch = e.targetTouches[0];
+                apple.style.position = 'absolute';
+                apple.style.left = (touch.pageX - 30) + 'px';
+                apple.style.top = (touch.pageY - 30) + 'px';
+                e.preventDefault(); 
+            }, {passive: false});
+
+            // Barmoqni qo'yib yuborganda
+            apple.addEventListener('touchend', function(e) {
+                let appleRect = apple.getBoundingClientRect();
+                let basketRect = basket.getBoundingClientRect();
+
+                // Olma markazi koordinatalari
+                let appleX = appleRect.left + (appleRect.width / 2);
+                let appleY = appleRect.top + (appleRect.height / 2);
+
+                // Savatning ichiga tushdimi?
+                if (appleX > basketRect.left && appleX < basketRect.right &&
+                    appleY > basketRect.top && appleY < basketRect.bottom) {
+                    
+                    if (apple.classList.contains('target')) {
+                        // To'g'ri olma
+                        apple.style.display = 'none';
+                        basket.innerHTML = "🧺 🍎 Zo'r!";
+                        basket.style.background = "#c8e6c9";
+                        basket.style.borderColor = "#4caf50";
+                        roboText.innerText = "Barakalla! To'g'ri topding! Endi pastdagi tugmani bos.";
+                        finishBtn.style.display = "block"; // Tugma endi paydo bo'ladi
+                    } else {
+                        // Noto'g'ri olma, joyiga qaytadi
+                        apple.style.position = 'relative';
+                        apple.style.left = '0';
+                        apple.style.top = '0';
+                        roboText.innerText = "O'ylab ko'ring! Ayiqchaga faqat KICHKINA va QIZIL olma kerak.";
+                    }
+                } else {
+                    // Savatdan tashqariga tashlasa ham joyiga qaytadi
+                    apple.style.position = 'relative';
+                    apple.style.left = '0';
+                    apple.style.top = '0';
+                }
+            });
+        });
 
         function sendDataToBot() {
-            // Tugma bosilganda Robo-Ustozning gapi o'zgaradi
-            document.getElementById('robo-text').innerText = "Barakalla! Ma'lumotlarni serverga yuboryapman... 💾";
-            
-            // Botga (Python'ga) topshiriq bajarilgani haqida xabar yuboramiz
+            roboText.innerText = "Ma'lumotlar serverga yuborilmoqda... 💾";
             setTimeout(() => {
                 tg.sendData("modul_1_tugadi");
-            }, 1500);
+            }, 1000);
         }
     </script>
 </body>
