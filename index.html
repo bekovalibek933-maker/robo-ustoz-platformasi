@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Bilimlar Oroli: 1-Modul</title>
+    <title>Bilimlar Oroli</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { 
@@ -21,175 +21,137 @@
             min-height: 45px;
         }
         
-        /* 1-Topshiriq */
-        #basket {
-            width: 80%; height: 120px; margin: 0 auto 30px auto;
-            border: 4px dashed #ff9800; border-radius: 20px; background: #fff3e0;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px; font-weight: bold; color: #e65100;
-        }
-        .apples-container { display: flex; justify-content: space-around; height: 150px; }
-        .apple { position: relative; z-index: 10; touch-action: none; }
-        .big { font-size: 60px; } .small { font-size: 35px; }
-        
-        /* 2-Topshiriq */
-        .blocks-container {
-            display: flex; justify-content: space-around; align-items: flex-end; height: 150px;
-        }
-        .block {
-            background-color: #8d6e63; border: 3px solid #5d4037; border-radius: 5px;
-            display: flex; align-items: center; justify-content: center; color: white;
-            font-weight: bold; cursor: pointer; transition: 0.3s;
-        }
-        .block-short { width: 50px; height: 50px; }
-        .block-long { width: 120px; height: 80px; }
-        .block.correct { background-color: #4CAF50; border-color: #2E7D32; transform: scale(1.1); }
-
-        /* 3-Topshiriq */
-        .honey-container { font-size: 50px; margin: 20px 0; }
-        .answer-btns { display: flex; justify-content: center; gap: 15px; }
         .ans-btn {
             background: #2196F3; color: white; padding: 15px 25px;
-            border: none; border-radius: 10px; font-size: 24px; font-weight: bold; cursor: pointer;
+            border: none; border-radius: 10px; font-size: 20px; font-weight: bold; cursor: pointer; margin: 5px;
         }
         .ans-btn:active { background: #0b7dda; }
-
-        .btn { 
+        
+        .btn-finish { 
             background: #4CAF50; color: white; padding: 15px 30px; 
             border: none; border-radius: 10px; font-size: 18px; 
             font-weight: bold; cursor: pointer; margin: 20px auto; display: none;
         }
-        
-        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <div class="robo-ustoz">
         <h3>🤖 Robo-Ustoz</h3>
-        <div class="speech-bubble" id="robo-text">
-            1-Vazifa: Ayiqchaga faqat KICHKINA va QIZIL olmani savatga solishga yordam ber!
-        </div>
+        <div class="speech-bubble" id="robo-text">Dars yuklanmoqda... ⏳</div>
     </div>
 
-    <div id="task1-container">
-        <div id="basket">🧺 Bo'sh savat</div>
-        <div class="apples-container">
-            <div class="apple big" id="wrong1">🍏</div>
-            <div class="apple small target" id="correct-apple">🍎</div>
-            <div class="apple big" id="wrong2">🍎</div>
-        </div>
-        <button class="btn" id="next-btn1" onclick="goToTask2()">Keyingi vazifa ➡️</button>
-    </div>
-
-    <div id="task2-container" class="hidden">
-        <p style="font-size: 18px; font-weight: bold; color: #5d4037;">Ko'lmakdan o'tish uchun to'g'ri blokni tanlang:</p>
-        <div class="blocks-container">
-            <div class="block block-short" onclick="checkBlock(this, false)">Qisqa</div>
-            <div class="block block-long" onclick="checkBlock(this, true)">Katta va Uzun</div>
-            <div class="block block-short" onclick="checkBlock(this, false)">Qisqa</div>
-        </div>
-        <button class="btn" id="next-btn2" onclick="goToTask3()">Keyingi vazifa ➡️</button>
-    </div>
-
-    <div id="task3-container" class="hidden">
-        <p style="font-size: 18px; font-weight: bold; color: #5d4037;">Ayiqchaning qishga g'amlagan asallari nechta ekan?</p>
-        <div class="honey-container">🍯 🍯 🍯</div>
-        <div class="answer-btns">
-            <button class="ans-btn" onclick="checkMath(2)">2</button>
-            <button class="ans-btn" onclick="checkMath(3)">3</button>
-            <button class="ans-btn" onclick="checkMath(4)">4</button>
-        </div>
-        <button class="btn" id="finish-btn" onclick="sendDataToBot()">🚀 Darsni yakunlash</button>
+    <div id="dars-qolipi">
+        <h2 id="dars-sarlavha">Sarlavha</h2>
+        <p id="dars-savol" style="font-size: 18px; color: #5d4037;">Savol matni</p>
+        <div id="dars-rasm" style="font-size: 60px; margin: 20px;">🖼</div>
+        
+        <div id="tugmalar-qutisi"></div> 
+        
+        <button class="btn-finish" id="finish-btn" onclick="yakunlash()">🏆 Modulni yakunlash</button>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand(); 
 
+        // ==========================================
+        // 1. MA'LUMOTLAR OMBORI (Barcha darslar shu yerda)
+        // ==========================================
+        const barchaModullar = {
+            "1": {
+                sarlavha: "🍎 1-Modul: Sanash",
+                savol: "Ayiqchaning asallari nechta?",
+                rasm: "🍯 🍯 🍯",
+                variantlar: [2, 3, 4],
+                javob: 3,
+                tabrik: "Oshqoyil! To'g'ri topdingiz! 🎉"
+            },
+            "2": {
+                sarlavha: "🚀 2-Modul: Matematika",
+                savol: "Raketa uchishi uchun misolni yeching:\n 5 + 3 = ?",
+                rasm: "🚀 🌌",
+                variantlar: [7, 8, 9],
+                javob: 8,
+                tabrik: "Uraaa! Raketa parvozga tayyor! 🚀"
+            },
+            "3": {
+                sarlavha: "🪐 3-Modul: Koinot",
+                savol: "Quyosh sistemasidagi eng katta sayyora qaysi?",
+                rasm: "🌍 🪐 🔴",
+                variantlar: ["Yer", "Yupiter", "Mars"],
+                javob: "Yupiter",
+                tabrik: "Barakalla! Yupiter haqiqatan ham eng kattasi! 🪐"
+            },
+            "4": {
+                sarlavha: "🚦 4-Modul: Mantiq",
+                savol: "Svetoforning eng tepasida qaysi rang joylashgan?",
+                rasm: "🚦",
+                variantlar: ["Yashil", "Sariq", "Qizil"],
+                javob: "Qizil",
+                tabrik: "To'ppa-to'g'ri! Qizil chiroqda to'xtash kerak. 🛑"
+            },
+            "5": {
+                sarlavha: "🐟 5-Modul: Jonivorlar",
+                savol: "Faqat suvda yashaydigan jonivorni toping:",
+                rasm: "🌊",
+                variantlar: ["🐈", "🐟", "🐓"],
+                javob: "🐟",
+                tabrik: "Zo'r! Baliqlar faqat suvda yashaydi. 💦"
+            }
+        };
+
+        // ==========================================
+        // 2. DASTUR MANTIQI (Miyya)
+        // ==========================================
         const roboText = document.getElementById('robo-text');
-        
-        // --- 1-Topshiriq Mexanikasi ---
-        const apples = document.querySelectorAll('.apple');
-        const basket = document.getElementById('basket');
-        const nextBtn1 = document.getElementById('next-btn1');
-
-        apples.forEach(apple => {
-            apple.addEventListener('touchmove', function(e) {
-                let touch = e.targetTouches[0];
-                apple.style.position = 'absolute';
-                apple.style.left = (touch.pageX - 30) + 'px';
-                apple.style.top = (touch.pageY - 30) + 'px';
-                e.preventDefault(); 
-            }, {passive: false});
-
-            apple.addEventListener('touchend', function(e) {
-                let appleRect = apple.getBoundingClientRect();
-                let basketRect = basket.getBoundingClientRect();
-                let appleX = appleRect.left + (appleRect.width / 2);
-                let appleY = appleRect.top + (appleRect.height / 2);
-
-                if (appleX > basketRect.left && appleX < basketRect.right &&
-                    appleY > basketRect.top && appleY < basketRect.bottom) {
-                    
-                    if (apple.classList.contains('target')) {
-                        apple.style.display = 'none';
-                        basket.innerHTML = "🧺 🍎 Zo'r!";
-                        basket.style.background = "#c8e6c9";
-                        roboText.innerText = "Barakalla! Endi keyingi vazifaga o'tamiz.";
-                        nextBtn1.style.display = "block"; 
-                    } else {
-                        apple.style.position = 'relative'; apple.style.left = '0'; apple.style.top = '0';
-                        roboText.innerText = "Xato! Faqat KICHKINA va QIZIL olma kerak.";
-                    }
-                } else {
-                    apple.style.position = 'relative'; apple.style.left = '0'; apple.style.top = '0';
-                }
-            });
-        });
-
-        // --- Ekranlarni almashtirish ---
-        function goToTask2() {
-            document.getElementById('task1-container').classList.add('hidden');
-            document.getElementById('task2-container').classList.remove('hidden');
-            roboText.innerText = "2-Vazifa: Ko'lmakdan sakrab o'tish uchun UZUN va KATTA blokni bosib tanla!";
-        }
-
-        function goToTask3() {
-            document.getElementById('task2-container').classList.add('hidden');
-            document.getElementById('task3-container').classList.remove('hidden');
-            roboText.innerText = "3-Vazifa: Ekranda jami nechta asal idishi borligini sanab, to'g'ri raqamni bosing.";
-        }
-
-        // --- 2-Topshiriq Mexanikasi ---
-        const nextBtn2 = document.getElementById('next-btn2');
-        function checkBlock(element, isCorrect) {
-            if (isCorrect) {
-                element.classList.add('correct');
-                element.innerText = "✅ Zo'r!";
-                roboText.innerText = "Qoyil! Ayiqcha xavfsiz o'tib oldi.";
-                nextBtn2.style.display = "block";
-            } else {
-                roboText.innerText = "Kichkina blokdan ayiqcha yiqilib tushadi. Kattarog'ini qidiring!";
-            }
-        }
-
-        // --- 3-Topshiriq Mexanikasi ---
+        const sarlavha = document.getElementById('dars-sarlavha');
+        const savol = document.getElementById('dars-savol');
+        const rasm = document.getElementById('dars-rasm');
+        const tugmalarQutisi = document.getElementById('tugmalar-qutisi');
         const finishBtn = document.getElementById('finish-btn');
-        function checkMath(answer) {
-            if(answer === 3) {
-                roboText.innerText = "Oshqoyil! Siz hamma vazifalarni to'g'ri bajardingiz! 🎉 Yulduzchalar sizniki!";
-                finishBtn.style.display = "block";
+
+        // Linkdan modul raqamini olamiz
+        const urlParams = new URLSearchParams(window.location.search);
+        const joriyRaqam = urlParams.get('modul') || '1'; 
+        
+        // Tanlangan darsni ombordan olib chiqamiz
+        const joriyDars = barchaModullar[joriyRaqam];
+
+        if (joriyDars) {
+            // Qolipni to'ldiramiz
+            sarlavha.innerText = joriyDars.sarlavha;
+            savol.innerText = joriyDars.savol;
+            rasm.innerText = joriyDars.rasm;
+            roboText.innerText = "Salom! To'g'ri javobni topishga harakat qiling.";
+
+            // Tugmalarni avtomatik yaratamiz
+            joriyDars.variantlar.forEach(variant => {
+                let btn = document.createElement("button");
+                btn.className = "ans-btn";
+                btn.innerText = variant;
+                btn.onclick = () => javobniTekshirish(variant);
+                tugmalarQutisi.appendChild(btn);
+            });
+        } else {
+            roboText.innerText = "Kechirasiz, bunday dars hozircha yo'q.";
+        }
+
+        // Javobni tekshirish qismi
+        function javobniTekshirish(tanlanganJavob) {
+            if (tanlanganJavob === joriyDars.javob) {
+                roboText.innerText = joriyDars.tabrik;
+                finishBtn.style.display = "block"; // Keyingi bosqich tugmasi chiqadi
             } else {
-                roboText.innerText = "Yana bir marta sanab ko'ring-chi? 🍯🍯🍯";
+                roboText.innerText = "Xato! Yana bir bor o'ylab ko'ring.";
             }
         }
 
-        // --- Ma'lumotni botga yuborish ---
-        function sendDataToBot() {
-            roboText.innerText = "Natijangiz tekshirilmoqda va ota-onangizga yuborilmoqda... 💾";
+        // Botga xabar yuborish
+        function yakunlash() {
+            roboText.innerText = "Natija serverga saqlanmoqda... 💾";
             setTimeout(() => {
-                tg.sendData("modul_1_tugadi");
+                tg.sendData(`modul_${joriyRaqam}_tugadi`); // Qaysi modul tugaganini botga aytadi
             }, 1500);
         }
     </script>
