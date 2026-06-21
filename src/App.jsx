@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { BookOpen, Home, CheckCircle, ChevronRight, ArrowLeft, PlayCircle, Star, Award, FileText, Info, Search, Bell, Trophy, CheckCircle2, XCircle, RefreshCcw, Download } from 'lucide-react';
+import { useState } from 'react';
+import { BookOpen, Home, ChevronRight, ArrowLeft, PlayCircle, Star, Award, FileText, Info, Trophy, CheckCircle2, XCircle, RefreshCcw, Download } from 'lucide-react';
 
 // Avtomatik darslarni shakllantirish funksiyasi (1 dan 144 gacha uzluksiz qilish uchun)
 const generateLessonsForPart = (start, end, specificLessons) => {
