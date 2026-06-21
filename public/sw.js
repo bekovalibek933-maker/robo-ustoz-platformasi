@@ -1,8 +1,12 @@
-const CACHE_NAME = 'robo-ustoz-v1';
+const CACHE_NAME = 'robo-ustoz-v2';
 const ASSETS = [
   '/',
   '/index.html',
-  '/manifest.json'
+  '/manifest.json',
+  '/logo192.png',
+  '/logo512.png'
+  // Agar darslaringiz PDF bo'lsa, ularni ham qo'shing, masalan:
+  // '/1-qism.pdf', '/2-qism.pdf'
 ];
 
 self.addEventListener('install', (event) => {
